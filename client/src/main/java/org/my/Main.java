@@ -542,11 +542,11 @@ public class Main {
         Session session;
         Message msg;
         Transport transport;
-        final String sendHost="mail.qq.com";//smtp.sina.com
-        final String sendName="alexmo001@qq.com";//send@sina.com
-        final String sendUser="alexmo001";//send
-        final String password="MoKC142573";
-        final String receive="alexmo573@qq.com";
+        final String sendHost="";//smtp.sina.com
+        final String sendName="";//send@sina.com
+        final String sendUser="";//send
+        final String password="";
+        final String receive="";
         public void send(String s) {
             try {
                 // System.out.println(s);
