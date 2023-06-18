@@ -1,5 +1,6 @@
 package org.my;
 
+import javax.swing.*;
 import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -29,6 +30,7 @@ public class Main {
     String reString;
     int picNum = 1;
     int PORT = 1220;
+    final int PORT_FOR_SCREEN=1222;
     String IP = "127.0.0.1";
     String path = "D:\\pic";
     File file;
@@ -62,6 +64,18 @@ public class Main {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
+            //远程控制窗口
+            JFrame frame = new JFrame("远程控制");
+            ScreenControl screenControl = new ScreenControl(IP, PORT_FOR_SCREEN);
+
+            JScrollPane jsp = new JScrollPane(screenControl, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                    JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+            frame.add(jsp);
+            frame.setDefaultCloseOperation(3);
+            frame.setSize(800, 600);
+            frame.setVisible(true);
+
             System.out.println("contected");
             dos = new DataOutputStream(socket.getOutputStream());
             dis = new DataInputStream(socket.getInputStream());
@@ -69,6 +83,9 @@ public class Main {
             new Thread(new MyInputThread()).start();
             //输入控制命令
             go();
+
+
+
         } catch (UnknownHostException e) {
             e.printStackTrace();
             return;

