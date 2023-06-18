@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 传输数据
+ * 传输屏幕控制的数据
  *
  *
  */

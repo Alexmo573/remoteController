@@ -53,7 +53,7 @@ public class ScreenControlClient implements Runnable {
 				request = new ObjectInputStream(new BufferedInputStream(client.getInputStream()));
 				ControlCarrier carrier = (ControlCarrier) request.readObject();
 
-				System.out.println("收到命令:" + carrier);
+				//System.out.println("收到命令:" + carrier);
 
 				if (carrier.getMouseX() != -1 && carrier.getMouseY() != -1) {
 					controlMouseRobot.mouseMove(carrier.getMouseX(), carrier.getMouseY());
@@ -78,7 +78,7 @@ public class ScreenControlClient implements Runnable {
 				for (Integer releaseKey : carrier.getKeyReleaseCode()) {
 					controlMouseRobot.keyRelease(releaseKey);
 				}
-				System.out.println(carrier.getType());
+				//System.out.println(carrier.getType());
 
 				//发送桌面图像回客户端
 				Dimension desktopSize = Toolkit.getDefaultToolkit().getScreenSize();

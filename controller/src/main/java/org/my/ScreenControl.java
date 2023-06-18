@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 客户端，控制端
+ * 实现屏幕控制
  *
  *
  */

